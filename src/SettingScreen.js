@@ -1,7 +1,20 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button, Alert, ScrollView, Dimensions } from 'react-native';
 import { Time } from './components/Time.js';
 import { Map } from './components/Map.js'
+import Modal from 'react-native-modalbox';
+
+const screen = Dimensions.get('window');
+const musicData =[];
+
+for(let i=0; i < 30; i++){ //テストデータ作成
+  musicData.push({
+    title: "musicTitle"+i,
+    artist: "artist"+i,
+    genre: "musicGenre"+i,
+    musicAlbum: "Album"+i,
+  });
+}
 
 export class SettingScreen extends React.Component {
   constructor(props) {
@@ -16,7 +29,7 @@ export class SettingScreen extends React.Component {
       date: "2016-05-15",
       time: "8:16 PM",
       // music info
-      musicId: "your world is"
+      musicId: "Select your music"
     }
   }
 
@@ -68,13 +81,26 @@ export class SettingScreen extends React.Component {
     Alert.alert("Success", "set the music in your world !!!")
   }
 
+  setMusic = (num) => { this.setState({musicId: musicData[num].title}); }
+
   render() {
+    let trackJSX = [];
+    for(let i=0; i < musicData.length; i++){
+      trackJSX.push(
+        <Button title={"title: "+ musicData[i].title + " artist: "+ musicData[i].artist} onPress={this.setMusic.bind(this,i)} />
+      );
+    }
     return (
       <View style={styles.Setting}>
         <View style={{ flex: 1, backgroundColor: '#FF00FF', justifyContent: 'center', alignItems: 'center', margin: 0 }}>
-          <Text style={styles.text}>
-            select music
-          </Text>
+        <Button title={this.state.musicId} onPress={() => this.refs.modal.open()} />
+        <Modal style={styles.modal} position={"center"} backdrop={true} ref={"modal"} swipeArea={20} coverScreen={true}>
+          <ScrollView width={screen.width}>
+            <View>
+            { trackJSX }
+            </View>
+          </ScrollView>
+        </Modal>
         </View >
         <View style={{ flex: 6, justifyContent: 'center', margin: 0 }}>
           <Map settingLocation={this.settingLocation}></Map>
@@ -104,5 +130,10 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingBottom: 50,
     backgroundColor: '#FFFFFF'
-  }
+  },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 500,
+  },
 })
