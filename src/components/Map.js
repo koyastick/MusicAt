@@ -66,6 +66,14 @@ export class Map extends Component {
 
   movePlace() {
     this.getCurrentPosition(this);
+    setTimeout(() => {
+      this.setCameraPosition({
+        latitude: this.state.latitude,
+        longitude: this.state.longitude,
+        latitudeDelta: this.state.latitudeDelta,
+        longitudeDelta: this.state.longitudeDelta
+      })
+    }, 500)
   }
 
   removeMarkers() {

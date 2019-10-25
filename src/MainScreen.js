@@ -21,7 +21,7 @@ export class MainScreen extends React.Component {
     this.latitude = 38.255900;
     this.longitude = 140.84240;
     this.getCurrentPosition(this);
-    setTimeout(() => { this.syncLatLong();}, 1000);
+    setTimeout(() => { this.syncLatLong();}, 600);
     this.loadMarkers()
   }
 
