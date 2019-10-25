@@ -10,9 +10,30 @@ export class Map extends Component {
     this.state = {
       latitude:38.255900,
       longitude:140.84240,
+      latitudeDelta:0.00520,
+      longitudeDelta:0.00520,
       markers: []
     };
+    this.camera = {
+      latitude: 0,
+      longitude: 0,
+      latitudeDelta: 0.00520,
+      longitudeDelta: 0.00520
+    }
     setTimeout(() => {this.getCurrentPosition(this)}, 1000);
+  }
+
+  setCameraPosition = (region) => {
+    this.camera = region
+  }
+
+  syncCameraPosition = () => {
+    this.setState({
+      latitude: this.camera.latitude,
+      longitude: this.camera.longitude,
+      latitudeDelta: this.camera.latitudeDelta,
+      longitudeDelta: this.camera.longitudeDelta,
+    })
   }
 
   getCurrentPosition = (obj) => {
@@ -33,7 +54,9 @@ export class Map extends Component {
     const _longitude = position.coords.longitude;
     this.setState({
       latitude: _latitude,
-      longitude: _longitude
+      longitude: _longitude,
+      latitudeDelta: LatitudeDelta,
+      longitudeDelta: LongitudeDelta
     });
   }
 
@@ -46,6 +69,7 @@ export class Map extends Component {
   }
 
   removeMarkers() {
+    this.syncCameraPosition();
     this.setState({markers: []});
   }
 
@@ -58,12 +82,14 @@ export class Map extends Component {
           region={{
             latitude:this.state.latitude,
             longitude:this.state.longitude,
-            latitudeDelta:LatitudeDelta,
-            longitudeDelta:LongitudeDelta,
+            latitudeDelta:this.state.latitudeDelta,
+            longitudeDelta:this.state.longitudeDelta,
           }}
           showsUserLocation={true}
           showsMyLocationButton={true}
+          onRegionChangeComplete={(position) => {this.setCameraPosition(position)}}
           onLongPress={(coords, pos) => {
+              this.syncCameraPosition();
               const marker = {
                 latlng: {
                   latitude: coords.nativeEvent.coordinate.latitude,
@@ -73,10 +99,6 @@ export class Map extends Component {
                 description: ""
               }
               this.state.markers.push(marker);
-              this.setState({
-                latitude: coords.nativeEvent.coordinate.latitude,
-                longitude: coords.nativeEvent.coordinate.longitude
-              });
               this.props.settingLocation(coords.nativeEvent.coordinate.latitude, coords.nativeEvent.coordinate.longitude)
             }
           }
