@@ -6,6 +6,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { throwStatement } from '@babel/types';
 import { Map } from './components/Map.js'
 import Modal from 'react-native-modalbox';
+import { getDistance } from 'geolib';
 import { SettingScreen } from './SettingScreen.js';
 
 const screen = Dimensions.get('window');
@@ -78,14 +79,21 @@ export class MainScreen extends React.Component {
       })
       .catch(err => console.warn(err))
   }
+
   isNear(obj, c_lat, c_lng){
-    if(Math.abs( (obj.place.latitude-c_lat) < 0.00001) && (Math.abs(obj.place.longitude-c_lng)<0.00001 )){
+    const dist = getDistance(
+      {latitude: obj.place.latitude, longitude: obj.place.longitude},
+      {latitude: c_lat, longitude: c_lng}
+    );
+    console.log(dist);
+    if(dist <= nearDist){
       return true;
     }
     else{
       return false;
     }
   }
+
   checker(){
     this.getCurrentPosition(this);
     console.log('you\'re @ (latlng) '+this.latitude+'/'+this.longitude);
@@ -155,6 +163,8 @@ export class MainScreen extends React.Component {
 
 const LatitudeDelta = 0.00720;
 const LongitudeDelta = 0.00720;
+const nearDist = 40;
+
 const styles = StyleSheet.create({
   text: {
     // color: '#FFFFFF',
