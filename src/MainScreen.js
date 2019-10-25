@@ -20,11 +20,12 @@ export class MainScreen extends React.Component {
     };
     this.latitude = 38.255900;
     this.longitude = 140.84240;
-    setTimeout(() => {this.getCurrentPosition(this); this.fetchLatLong();}, 1000);
+    this.getCurrentPosition(this);
+    setTimeout(() => { this.syncLatLong();}, 1000);
     this.loadMarkers()
   }
 
-  fetchLatLong = () => {
+  syncLatLong = () => {
     this.setState({
       latitude: this.latitude,
       longitude: this.longitude
@@ -52,7 +53,7 @@ export class MainScreen extends React.Component {
   }
 
   loadMarkers = () => {
-    this.fetchLatLong();
+    this.syncLatLong();
     storage
       .load({ key: 'mapInfo' })
       .then(res => {
